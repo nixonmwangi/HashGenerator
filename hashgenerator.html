@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Hash Generator</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    :root {
+      --text-dark: #ffffff;
+      --text-light: #111111;
+      --label-color: #ffcc00;
+
+      --btn-gen-dark: linear-gradient(45deg, #00cfff, #0077ff);
+      --btn-clear-dark: linear-gradient(45deg, #ff416c, #ff4b2b);
+      --btn-theme-dark: linear-gradient(45deg, #8e2de2, #4a00e0);
+
+      --btn-gen-light: linear-gradient(45deg, #4da6ff, #00bfff);
+      --btn-clear-light: linear-gradient(45deg, #ff7f7f, #ff5050);
+      --btn-theme-light: linear-gradient(45deg, #aa88ff, #bb66ff);
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #060b17, #0a1a2e, #061b34, #0a1a2e);
+      background-size: 400% 400%;
+      animation: bodyGradient 30s ease infinite;
+      color: var(--text-dark);
+      transition: all 0.5s ease;
+      overflow: hidden;
+      position: relative;
+    }
+
+    @keyframes bodyGradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .container {
+      position: relative;
+      width: 750px;
+      max-width: 95%;
+      border-radius: 20px;
+      padding: 40px;
+      overflow: hidden;
+      transition: all 0.5s ease;
+      background: linear-gradient(135deg, #060b17, #0a1a2e, #061b34, #0a1a2e);
+      background-size: 300% 300%;
+      animation: cardGradient 15s ease infinite;
+      box-shadow: 0 0 25px rgba(0,255,255,0.15);
+    }
+
+    @keyframes cardGradient {
+      0%   { background-position: 0% 50%; box-shadow: 0 0 20px rgba(0,255,255,0.15); }
+      25%  { background-position: 50% 50%; box-shadow: 0 0 25px rgba(0,200,255,0.2); }
+      50%  { background-position: 100% 50%; box-shadow: 0 0 30px rgba(0,255,200,0.25); }
+      75%  { background-position: 50% 50%; box-shadow: 0 0 25px rgba(0,150,255,0.2); }
+      100% { background-position: 0% 50%; box-shadow: 0 0 20px rgba(0,255,255,0.15); }
+    }
+
+    .container:hover {
+      animation: cardGlowPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes cardGlowPulse {
+      0%, 100% { box-shadow: 0 0 25px rgba(0,255,255,0.25); }
+      50% { box-shadow: 0 0 40px rgba(0,255,255,0.35); }
+    }
+
+    h2 { text-align: center; margin-top: 0; font-size: 2rem; color: var(--label-color); position: relative; z-index:1; }
+
+    textarea {
+      width: 100%; padding: 15px; border-radius: 12px; border: none;
+      font-size: 16px; resize: vertical; outline: none;
+      background: rgba(255,255,255,0.05); color: #fff; margin-bottom: 10px;
+      position: relative; z-index:1;
+      transition: all 0.5s ease;
+    }
+    textarea::placeholder { color: #aaa; }
+
+    select {
+      padding: 8px;
+      border-radius: 12px;
+      border: none;
+      font-size: 14px;
+      margin-bottom: 10px;
+      position: relative;
+      z-index:1;
+      background: rgba(0,0,0,0.4); /* darker background */
+      color: #fff; /* text color */
+      box-shadow: 0 0 10px rgba(0,255,255,0.1); /* subtle glow */
+      transition: all 0.3s ease;
+    }
+    select option {
+      background: #0a1a2e; /* dark option background */
+      color: #fff; /* white text */
+    }
+
+    .btn {
+      padding: 10px 20px; margin: 5px 5px 0 0; border: none;
+      border-radius: 12px; cursor: pointer; font-size: 14px; color: #fff;
+      transition: all 0.3s ease;
+      position: relative; z-index:1;
+      background-size: 200% 200%;
+    }
+
+    .btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 10px rgba(0,255,255,0.2);
+    }
+
+    .btn-gen { background: var(--btn-gen-dark); }
+    .btn-clear { background: var(--btn-clear-dark); }
+    .btn-theme { background: var(--btn-theme-dark); }
+
+    .result-card {
+      background: rgba(255,255,255,0.05);
+      border-radius: 15px;
+      padding: 20px;
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      position: relative; z-index:1;
+      transition: all 0.5s ease;
+    }
+
+    .hash-section {
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(255,255,255,0.05); padding: 10px 15px; border-radius: 12px;
+      font-family: monospace; word-break: break-all; transition: all 0.5s ease;
+    }
+
+    .hash-section:hover {
+      box-shadow: 0 0 20px rgba(0,255,255,0.4);
+      border: 1px solid rgba(0,255,255,0.25);
+      background: rgba(255,255,255,0.08);
+    }
+
+    .hash-label { font-weight: bold; color: var(--label-color); margin-right: 10px; }
+
+    .copy-icon { cursor: pointer; margin-left: 10px; color: #fff; transition: color 0.3s; }
+    .copy-icon:hover { color: #00f0ff; }
+
+    .tooltip {
+      position: absolute; background: #00f0ff; color: #000; padding: 5px 8px;
+      border-radius: 5px; font-size: 12px; opacity: 0; pointer-events: none;
+      transition: opacity 0.3s;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.19.0/js/md5.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h2>Hash Generator</h2>
+    <textarea id="inputText" rows="4" placeholder="Type something..."></textarea>
+
+    <label for="format">Output Format:</label>
+    <select id="format">
+      <option value="hex">HEX</option>
+      <option value="base64">Base64</option>
+      <option value="binary">Binary</option>
+    </select>
+
+    <div>
+      <button class="btn btn-gen"><i class="fas fa-bolt"></i> Generate</button>
+      <button class="btn btn-clear"><i class="fas fa-trash"></i> Clear</button>
+      <button class="btn btn-theme"><i class="fas fa-adjust"></i> Theme</button>
+    </div>
+
+    <div class="result-card" id="resultCard" style="display:none;"></div>
+  </div>
+
+  <div class="tooltip" id="tooltip">Copied!</div>
+
+  <script>
+    const inputText = document.getElementById("inputText");
+    const formatSelect = document.getElementById("format");
+    const resultCard = document.getElementById("resultCard");
+    const tooltip = document.getElementById("tooltip");
+    const container = document.querySelector('.container');
+    let darkMode = true;
+
+    inputText.addEventListener("input", generateAllHashes);
+    formatSelect.addEventListener("change", generateAllHashes);
+
+    async function generateHash(text, algorithm){
+      const encoder = new TextEncoder();
+      const data = encoder.encode(text);
+      const hashBuffer = await crypto.subtle.digest(algorithm,data);
+      return formatHash(hashBuffer, formatSelect.value);
+    }
+
+    function formatHash(buffer, format){
+      const bytes = Array.from(new Uint8Array(buffer));
+      if(format==='hex') return bytes.map(b=>b.toString(16).padStart(2,'0')).join('');
+      if(format==='base64') return btoa(String.fromCharCode(...bytes));
+      if(format==='binary') return bytes.map(b=>b.toString(2).padStart(8,'0')).join('');
+    }
+
+    function formatMd5(hexStr, format){
+      const bytes = hexStr.match(/.{2}/g).map(h=>parseInt(h,16));
+      if(format==='hex') return hexStr;
+      if(format==='base64') return btoa(String.fromCharCode(...bytes));
+      if(format==='binary') return bytes.map(b=>b.toString(2).padStart(8,'0')).join('');
+    }
+
+    async function generateAllHashes(){
+      const text = inputText.value.trim();
+      if(!text){ resultCard.style.display='none'; return; }
+
+      const sha256 = await generateHash(text,'SHA-256');
+      const sha1 = await generateHash(text,'SHA-1');
+      const md5Hash = formatMd5(md5(text), formatSelect.value);
+
+      resultCard.innerHTML = `
+        <div class="hash-section"><span class="hash-label">SHA-256:</span>${sha256} <i class="fas fa-copy copy-icon" onclick="copyText('${sha256}', this)"></i></div>
+        <div class="hash-section"><span class="hash-label">SHA-1:</span>${sha1} <i class="fas fa-copy copy-icon" onclick="copyText('${sha1}', this)"></i></div>
+        <div class="hash-section"><span class="hash-label">MD5:</span>${md5Hash} <i class="fas fa-copy copy-icon" onclick="copyText('${md5Hash}', this)"></i></div>
+      `;
+      resultCard.style.display='flex';
+    }
+
+    function copyText(text, element){
+      navigator.clipboard.writeText(text);
+      const rect = element.getBoundingClientRect();
+      tooltip.style.top = rect.top - 30 + "px";
+      tooltip.style.left = rect.left + "px";
+      tooltip.style.opacity = 1;
+      setTimeout(()=>{ tooltip.style.opacity = 0; },1000);
+    }
+
+    document.querySelector('.btn.btn-clear').onclick = ()=>{
+      inputText.value=''; resultCard.style.display='none';
+    };
+
+    document.querySelector('.btn.btn-gen').onclick = generateAllHashes;
+
+    document.querySelector('.btn.btn-theme').onclick = ()=>{
+      darkMode = !darkMode;
+      if(darkMode){
+        document.body.style.background = 'linear-gradient(135deg, #060b17, #0a1a2e, #061b34, #0a1a2e)';
+        container.style.background = 'linear-gradient(135deg, #060b17, #0a1a2e, #061b34, #0a1a2e)';
+        container.style.animation = 'cardGradient 15s ease infinite';
+        inputText.style.background = 'rgba(255,255,255,0.05)';
+        inputText.style.color = '#fff';
+        formatSelect.style.background = 'rgba(0,0,0,0.4)';
+        formatSelect.style.color = '#fff';
+        document.querySelectorAll('.btn-gen')[0].style.background = 'var(--btn-gen-dark)';
+        document.querySelectorAll('.btn-clear')[0].style.background = 'var(--btn-clear-dark)';
+        document.querySelectorAll('.btn-theme')[0].style.background = 'var(--btn-theme-dark)';
+        document.body.style.color = 'var(--text-dark)';
+      } else {
+        document.body.style.background = '#f2f2f2';
+        container.style.background = 'linear-gradient(135deg, #a0c4ff, #ffffff)';
+        container.style.animation = 'none';
+        inputText.style.background = '#ffffff';
+        inputText.style.color = '#111';
+        formatSelect.style.background = '#e0e0e0';
+        formatSelect.style.color = '#111';
+        document.querySelectorAll('.btn-gen')[0].style.background = 'var(--btn-gen-light)';
+        document.querySelectorAll('.btn-clear')[0].style.background = 'var(--btn-clear-light)';
+        document.querySelectorAll('.btn-theme')[0].style.background = 'var(--btn-theme-light)';
+        document.body.style.color = 'var(--text-light)';
+      }
+    };
+  </script>
+</body>
+</html>
