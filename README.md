@@ -20,4 +20,4 @@ You can see a live demo of the app by opening `index.html` in your browser.
 1. Clone or download the repository:
 
 ```bash
-git clone https://github.com/yourusername/sha-hash-generator.git
+git clone https://github.com/nixonmwangi/HashGenerator.git
